@@ -1,0 +1,18 @@
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+}
+
+group = 'com.easyweb4j'
+version = theVersion
+
+ext {
+  gn00Version = '1.0.0'
+}
+
+apply from: 'https://raw.githubusercontent.com/easyweb4j/gradle-gallery/master/basic-java.gradle'
+
+dependencies {
+  implementation "com.easyweb4j:gn00:${gn00Version}"
+
+}
