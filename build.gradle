@@ -8,11 +8,14 @@ version = theVersion
 
 ext {
   gn00Version = '1.0.0'
+  mybatisVersion = '3.5.4'
 }
 
 apply from: 'https://raw.githubusercontent.com/easyweb4j/gradle-gallery/master/basic-java.gradle'
 
 dependencies {
   implementation "com.easyweb4j:gn00:${gn00Version}"
+  compileOnly group: 'org.mybatis', name: 'mybatis', version: mybatisVersion
+
 
 }

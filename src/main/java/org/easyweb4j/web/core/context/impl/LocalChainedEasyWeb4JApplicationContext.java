@@ -49,6 +49,7 @@ public class LocalChainedEasyWeb4JApplicationContext<K extends Object, V extends
     internalMap().clear();
   }
 
+  @SuppressWarnings("unchecked")
   private ConcurrentHashMap<K, V> internalMap() {
     return (ConcurrentHashMap<K, V>) INTERNAL_STORAGE.get();
   }

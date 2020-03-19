@@ -1,5 +1,6 @@
 package org.easyweb4j.web.core.context;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -27,4 +28,5 @@ public interface EasyWeb4JApplicationContext<K extends Object, V extends Object>
    * clear all context data
    */
   void clear();
+
 }

@@ -21,6 +21,7 @@ public class GlobalChainedEasyWeb4JApplicationContext<K extends Object, V extend
     return false;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public Optional<V> get(K key) {
     if (null == key) {
