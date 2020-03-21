@@ -3,6 +3,7 @@ package org.easyweb4j.web.mybatis.core.scripting;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -10,6 +11,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.ReflectionException;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
@@ -54,6 +56,7 @@ public class EasyWeb4jApplicationContextAwareParameterHandler implements Paramet
     return parameterObject;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void setParameters(PreparedStatement ps) {
     ErrorContext.instance().activity("setting parameters")
@@ -79,13 +82,7 @@ public class EasyWeb4jApplicationContextAwareParameterHandler implements Paramet
         jdbcType = configuration.getJdbcTypeForNull();
       }
       try {
-        if (typeHandler.getClass().isInstance(value)) {
-          typeHandler.setParameter(ps, i + 1, value, jdbcType);
-        } else {
-          LOGGER
-            .warn("can not set parameter {} of type {} at index {}", propertyName, value.getClass(),
-              i);
-        }
+        typeHandler.setParameter(ps, i + 1, value, jdbcType);
       } catch (TypeException | SQLException e) {
         throw new TypeException(
           "Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
@@ -105,16 +102,17 @@ public class EasyWeb4jApplicationContextAwareParameterHandler implements Paramet
       value = parameterObject;
     } else {
       MetaObject metaObject = configuration.newMetaObject(parameterObject);
-      value = metaObject.getValue(propertyName);
-      if (null == value) {
-        value = getValueFromContext(propertyName);
+      try {
+        value = metaObject.getValue(propertyName);
+      } catch (ReflectionException ex) {
+        value = getValueFromContext(propertyName).orElseThrow(() -> ex);
       }
     }
 
     return value;
   }
 
-  private Object getValueFromContext(String propertyName) {
+  private Optional<Object> getValueFromContext(String propertyName) {
     if (null == easyWeb4JApplicationContext) {
       LOGGER.warn("easyWeb4JApplicationContext not found");
       return null;
