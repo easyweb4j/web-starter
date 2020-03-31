@@ -11,6 +11,10 @@ ext {
   mybatisVersion = '3.5.4'
   hikarCPVersion = '3.4.2'
   mariadbConnectorVersion = '2.6.0'
+  mybatisSpringVersion = '2.0.4'
+  mybatisSpringAutoconfigureVersion = '2.0.0'
+  springVersion = '5.0.0.RELEASE'
+  springBootVersion = '2.0.0.RELEASE'
 }
 
 apply from: 'https://raw.githubusercontent.com/easyweb4j/gradle-gallery/master/basic-java.gradle'
@@ -18,9 +22,16 @@ apply from: 'https://raw.githubusercontent.com/easyweb4j/gradle-gallery/master/b
 dependencies {
   implementation "com.easyweb4j:gn00:${gn00Version}"
   implementation group: 'org.mybatis', name: 'mybatis', version: mybatisVersion
+  implementation group: 'org.mybatis', name: 'mybatis-spring', version: mybatisSpringVersion
+  implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-autoconfigure', version: mybatisSpringAutoconfigureVersion
+  implementation group: 'org.springframework', name: 'spring-context', version: springVersion
+  implementation group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
 
   // https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
   testImplementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: mariadbConnectorVersion
   testImplementation group: 'com.zaxxer', name: 'HikariCP', version: hikarCPVersion
+}
 
+compileJava {
+  options.compilerArgs << '-parameters'
 }
