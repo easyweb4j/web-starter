@@ -13,6 +13,8 @@ import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.type.EnumOrdinalTypeHandler;
+import org.easyweb4j.web.core.context.EasyWeb4JApplicationContext;
+import org.easyweb4j.web.core.context.impl.GlobalChainedEasyWeb4JApplicationContext;
 import org.easyweb4j.web.mybatis.core.scripting.EasyWeb4jApplicationContextAwareXMLLanguageDriver;
 import org.easyweb4j.web.mybatis.core.type.handler.DeletedStatusTypeHandler;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
@@ -31,11 +33,14 @@ public class Easyweb4JMybatisAutoConfiguration {
   }
 
   @Bean
-  public List<ConfigurationCustomizer> mybatisConfiguration() {
+  public List<ConfigurationCustomizer> mybatisConfiguration(
+    EasyWeb4JApplicationContext<String, Object> context
+  ) {
     List<ConfigurationCustomizer> customizers = new ArrayList<>();
 
     customizers.add(setting());
     customizers.add(typeHandler());
+    customizers.add(context(context));
 
     return customizers;
   }
@@ -47,7 +52,8 @@ public class Easyweb4JMybatisAutoConfiguration {
       @SuppressWarnings("unchecked")
       public void customize(org.apache.ibatis.session.Configuration configuration) {
         BiConsumer<String, Consumer<Object>> setIfAbsent = (key, consumer) -> {
-          if (!properties.getConfigurationProperties().contains(key)) {
+          if (null != properties.getConfigurationProperties() &&
+            !properties.getConfigurationProperties().contains(key)) {
             consumer.accept(null);
           }
         };
@@ -95,11 +101,21 @@ public class Easyweb4JMybatisAutoConfiguration {
   @Bean
   public DatabaseIdProvider dbIDProvider() throws IOException {
     Properties properties = new Properties();
-    properties.load(getClass().getResourceAsStream("mybatis/default-db-id-provider.properties"));
+    properties.load(getClass().getResourceAsStream("/mybatis/default-db-id-provider.properties"));
 
     DatabaseIdProvider databaseIdProvider = new VendorDatabaseIdProvider();
     databaseIdProvider.setProperties(properties);
     return databaseIdProvider;
+  }
+
+  private ConfigurationCustomizer context(
+    EasyWeb4JApplicationContext<String, Object> context) {
+    return (configuration -> {
+      GlobalChainedEasyWeb4JApplicationContext<String, Object> globalChainedEasyWeb4JApplicationContext
+        = new GlobalChainedEasyWeb4JApplicationContext<>();
+      globalChainedEasyWeb4JApplicationContext
+        .set(EasyWeb4jApplicationContextAwareXMLLanguageDriver.class.getName(), context);
+    });
   }
 
 

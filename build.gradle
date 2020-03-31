@@ -30,6 +30,8 @@ dependencies {
   // https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
   testImplementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: mariadbConnectorVersion
   testImplementation group: 'com.zaxxer', name: 'HikariCP', version: hikarCPVersion
+  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
+  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: springBootVersion
 }
 
 compileJava {
