@@ -1,15 +1,20 @@
 package org.easyweb4j.web.mybatis.spring;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.mapping.DatabaseIdProvider;
+import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.type.EnumOrdinalTypeHandler;
 import org.easyweb4j.web.mybatis.core.scripting.EasyWeb4jApplicationContextAwareXMLLanguageDriver;
+import org.easyweb4j.web.mybatis.core.type.handler.DeletedStatusTypeHandler;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,12 +34,14 @@ public class Easyweb4JMybatisAutoConfiguration {
   public List<ConfigurationCustomizer> mybatisConfiguration() {
     List<ConfigurationCustomizer> customizers = new ArrayList<>();
 
-    customizers.add(settings());
+    customizers.add(setting());
+    customizers.add(typeHandler());
 
     return customizers;
   }
 
-  private ConfigurationCustomizer settings() {
+
+  private ConfigurationCustomizer setting() {
     return new ConfigurationCustomizer() {
       @Override
       @SuppressWarnings("unchecked")
@@ -78,5 +85,22 @@ public class Easyweb4JMybatisAutoConfiguration {
       }
     };
   }
+
+  private ConfigurationCustomizer typeHandler() {
+    return (configuration) -> {
+      configuration.getTypeHandlerRegistry().register(DeletedStatusTypeHandler.class);
+    };
+  }
+
+  @Bean
+  public DatabaseIdProvider dbIDProvider() throws IOException {
+    Properties properties = new Properties();
+    properties.load(getClass().getResourceAsStream("mybatis/default-db-id-provider.properties"));
+
+    DatabaseIdProvider databaseIdProvider = new VendorDatabaseIdProvider();
+    databaseIdProvider.setProperties(properties);
+    return databaseIdProvider;
+  }
+
 
 }
