@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.easyweb4j.web.core.dao.DeletedStatus;
+import org.easyweb4j.web.core.exception.SystemInternalException;
 
 /**
  * <p>转化{@see org.easyweb4j.web.core.dao.DeletedStatus}和JDBC的datetime或整形值，实现伪删除,抽象类</p>
@@ -29,7 +30,7 @@ public class DeletedStatusTypeHandler extends BaseTypeHandler<DeletedStatus> {
   public void setNonNullParameter(PreparedStatement ps, int i, DeletedStatus parameter,
     JdbcType jdbcType) throws SQLException {
     if (null == jdbcType) {
-      throw new RuntimeException(
+      throw new SystemInternalException(
         "JdbcType(TIMESTAMP|BIT|INTEGER) must be supplied for DeletedStatus");
     }
     switch (jdbcType) {
@@ -53,7 +54,7 @@ public class DeletedStatusTypeHandler extends BaseTypeHandler<DeletedStatus> {
         break;
 
       default:
-        throw new RuntimeException(
+        throw new SystemInternalException(
           "JdbcType not implemented for DeletedStatus: " + jdbcType.toString());
     }
   }
@@ -70,7 +71,8 @@ public class DeletedStatusTypeHandler extends BaseTypeHandler<DeletedStatus> {
     }
 
     if (0 > foundColumnNameInx) {
-      throw new RuntimeException("DeletedStatusTypeHandler columneName font found: " + columnName);
+      throw new SystemInternalException(
+        "DeletedStatusTypeHandler columneName font found: " + columnName);
     }
 
     return getNullableResult(metaData.getColumnType(foundColumnNameInx), rs, foundColumnNameInx);

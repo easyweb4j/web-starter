@@ -52,7 +52,7 @@ public class Easyweb4JMybatisAutoConfiguration {
       @SuppressWarnings("unchecked")
       public void customize(org.apache.ibatis.session.Configuration configuration) {
         BiConsumer<String, Consumer<Object>> setIfAbsent = (key, consumer) -> {
-          if (null != properties.getConfigurationProperties() &&
+          if (null == properties.getConfigurationProperties() ||
             !properties.getConfigurationProperties().contains(key)) {
             consumer.accept(null);
           }

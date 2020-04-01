@@ -20,14 +20,14 @@ public class EasyWeb4jApplicationContextAwareXMLLanguageDriver extends XMLLangua
     new GlobalChainedEasyWeb4JApplicationContext<>();
 
   @SuppressWarnings("unchecked")
-  @Override
-  public ParameterHandler createParameterHandler(
-    MappedStatement mappedStatement, Object parameterObject,
-    BoundSql boundSql) {
-    Object value =
-      easyWeb4JApplicationContext.get(this.getClass().getName()).orElse(null);
+@Override
+public ParameterHandler createParameterHandler(
+MappedStatement mappedStatement, Object parameterObject,
+BoundSql boundSql) {
+Object value =
+easyWeb4JApplicationContext.get(this.getClass().getName()).orElse(null);
 
-    return new EasyWeb4jApplicationContextAwareParameterHandler(
+return new EasyWeb4jApplicationContextAwareParameterHandler(
       mappedStatement, parameterObject, boundSql,
       ((EasyWeb4JApplicationContext<String, Object>) value)
     );

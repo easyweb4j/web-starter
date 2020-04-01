@@ -13,7 +13,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
@@ -39,7 +38,7 @@ public class MybatisStaterTest extends AbstractTransactionalTestNGSpringContextT
   @BeforeMethod
   public void setup() {
     Assert.assertNotNull(easyWeb4JApplicationContext);
-    easyWeb4JApplicationContext.set("DEFAULT_FLOOR", 1000);
+    easyWeb4JApplicationContext.set("DEFAULT_FLOOR", 111);
   }
 
   @Test
@@ -62,15 +61,17 @@ public class MybatisStaterTest extends AbstractTransactionalTestNGSpringContextT
     House houseTwo = new House();
     houseTwo.setName("house Two");
     houseTwo.setFloorNumber(1);
-    houseTwo.setState(DeletedStatus.NORMAL);
-    houseTwo.setStateTs(DeletedStatus.DELETED);
+    houseTwo.setState(DeletedStatus.DELETED);
+    houseTwo.setStateTs(DeletedStatus.NORMAL);
 
-    Assert.assertEquals(houseMapper.insert(houseTwo), 1);
+    Assert.assertEquals(houseMapper.insertWithGlobalContext(houseTwo), 1);
 
     house = houseMapper.selectOne(houseTwo.getId());
     Assert.assertNotEquals(house, houseTwo);
     Assert.assertEquals(house.getName(), houseTwo.getName());
-    Assert.assertEquals(easyWeb4JApplicationContext.get("DEFAULT_FLOOR"), houseTwo.getFloorNumber());
+    Assert.assertNotEquals(
+      easyWeb4JApplicationContext.get("DEFAULT_FLOOR").orElse(houseTwo.getFloorNumber()),
+      houseTwo.getFloorNumber());
 
 
   }
