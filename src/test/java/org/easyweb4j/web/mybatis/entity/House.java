@@ -1,6 +1,7 @@
 package org.easyweb4j.web.mybatis.entity;
 
 import com.google.common.base.Objects;
+import java.time.LocalDateTime;
 import org.easyweb4j.web.core.dao.DeletedStatus;
 
 public class House {
@@ -10,6 +11,7 @@ public class House {
   private Integer floorNumber;
   private DeletedStatus state;
   private DeletedStatus stateTs;
+  private LocalDateTime createDate;
 
 
   public Integer getId() {
@@ -52,6 +54,14 @@ public class House {
     this.stateTs = stateTs;
   }
 
+  public LocalDateTime getCreateDate() {
+    return createDate;
+  }
+
+  public void setCreateDate(LocalDateTime createDate) {
+    this.createDate = createDate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -65,11 +75,12 @@ public class House {
       Objects.equal(name, house.name) &&
       Objects.equal(floorNumber, house.floorNumber) &&
       state == house.state &&
-      stateTs == house.stateTs;
+      stateTs == house.stateTs &&
+      Objects.equal(createDate, house.createDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(id, name, floorNumber, state, stateTs);
+    return Objects.hashCode(id, name, floorNumber, state, stateTs, createDate);
   }
 }

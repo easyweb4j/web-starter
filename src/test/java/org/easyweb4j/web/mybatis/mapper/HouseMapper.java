@@ -9,14 +9,14 @@ import org.easyweb4j.web.mybatis.entity.House;
 @Mapper
 public interface HouseMapper {
 
-  @Insert("insert into house (name, floor_number, state, state_ts) values(#{name}, #{floorNumber}, #{state,jdbcType=BIT}, #{stateTs,jdbcType=TIMESTAMP})")
+  @Insert("insert into house (name, floor_number, state, state_ts, create_date) values(#{name}, #{floorNumber}, #{state,jdbcType=BIT}, #{stateTs,jdbcType=TIMESTAMP}, #{createDate})")
   @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "id", before = false, resultType = int.class)
   int insert(House house);
 
-  @Select("select id, name, floor_number,state, state_ts from house where id = #{id}")
+  @Select("select id, name, floor_number,state, state_ts, create_date from house where id = #{id}")
   House selectOne(Integer id);
 
-  @Insert("insert into house (name, floor_number, state, state_ts) values(#{name}, #{DEFAULT_FLOOR}, #{state,jdbcType=BIT}, #{stateTs,jdbcType=TIMESTAMP})")
+  @Insert("insert into house (name, floor_number, state, state_ts, create_date) values(#{name}, #{DEFAULT_FLOOR}, #{state,jdbcType=BIT}, #{stateTs,jdbcType=TIMESTAMP}, #{createDate})")
   @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "id", before = false, resultType = int.class)
   int insertWithGlobalContext(House house);
 }

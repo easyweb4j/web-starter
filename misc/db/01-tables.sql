@@ -10,5 +10,6 @@ create table  if not exists house (
   name varchar(16) not null,
   floor_number tinyint not null default 1,
   state bit(1) not null default b'00000001',
-  state_ts datetime not null
+  state_ts datetime not null,
+  create_date datetime not null
 );

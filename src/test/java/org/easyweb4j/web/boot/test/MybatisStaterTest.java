@@ -1,5 +1,7 @@
 package org.easyweb4j.web.boot.test;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.easyweb4j.web.core.context.EasyWeb4JApplicationContext;
 import org.easyweb4j.web.core.dao.DeletedStatus;
 import org.easyweb4j.web.mybatis.entity.House;
@@ -52,6 +54,7 @@ public class MybatisStaterTest extends AbstractTransactionalTestNGSpringContextT
     houseOne.setFloorNumber(1);
     houseOne.setState(DeletedStatus.NORMAL);
     houseOne.setStateTs(DeletedStatus.DELETED);
+    houseOne.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     Assert.assertEquals(houseMapper.insert(houseOne), 1);
 
@@ -63,6 +66,7 @@ public class MybatisStaterTest extends AbstractTransactionalTestNGSpringContextT
     houseTwo.setFloorNumber(1);
     houseTwo.setState(DeletedStatus.DELETED);
     houseTwo.setStateTs(DeletedStatus.NORMAL);
+    houseTwo.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
     Assert.assertEquals(houseMapper.insertWithGlobalContext(houseTwo), 1);
 
