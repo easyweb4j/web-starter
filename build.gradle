@@ -20,12 +20,14 @@ ext {
 apply from: 'https://raw.githubusercontent.com/easyweb4j/gradle-gallery/master/basic-java.gradle'
 
 dependencies {
-  implementation "com.easyweb4j:gn00:${gn00Version}"
+  api group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
+  api "com.easyweb4j:gn00:${gn00Version}"
+
   implementation group: 'org.mybatis', name: 'mybatis', version: mybatisVersion
   implementation group: 'org.mybatis', name: 'mybatis-spring', version: mybatisSpringVersion
   implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-autoconfigure', version: mybatisSpringAutoconfigureVersion
   implementation group: 'org.springframework', name: 'spring-context', version: springVersion
-  implementation group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json', version: springBootVersion
 
   // https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
   testImplementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: mariadbConnectorVersion
