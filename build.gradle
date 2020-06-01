@@ -15,9 +15,10 @@ ext {
   mybatisSpringAutoconfigureVersion = '2.0.0'
   springVersion = '5.0.0.RELEASE'
   springBootVersion = '2.0.0.RELEASE'
+  retrofitVersion = '2.8.1'
 }
 
-apply from: 'https://raw.githubusercontent.com/easyweb4j/gradle-gallery/master/basic-java.gradle'
+apply from: './gradle/gallery/basic-java.gradle'
 
 dependencies {
   api group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: springBootVersion
@@ -28,6 +29,10 @@ dependencies {
   implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-autoconfigure', version: mybatisSpringAutoconfigureVersion
   implementation group: 'org.springframework', name: 'spring-context', version: springVersion
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json', version: springBootVersion
+  // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
+  implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: retrofitVersion
+  // https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-jackson
+  compile group: 'com.squareup.retrofit2', name: 'converter-jackson', version: retrofitVersion
 
   // https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
   testImplementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: mariadbConnectorVersion

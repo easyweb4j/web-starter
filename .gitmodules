@@ -1,0 +1,3 @@
+[submodule "gradle/gallery"]
+	path = gradle/gallery
+	url = git@github.com:easyweb4j/gradle-gallery.git
