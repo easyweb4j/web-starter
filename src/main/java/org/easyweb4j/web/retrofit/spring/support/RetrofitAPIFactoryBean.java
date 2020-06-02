@@ -16,7 +16,6 @@ import retrofit2.Retrofit;
  */
 public class RetrofitAPIFactoryBean<T extends Object> implements FactoryBean<T>,
   ApplicationContextAware {
-
   protected String retrofitBeanName;
   protected Class<T> apiClass;
   protected ApplicationContext applicationContext;

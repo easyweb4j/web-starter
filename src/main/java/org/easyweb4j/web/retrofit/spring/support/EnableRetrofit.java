@@ -6,7 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
-import retrofit2.CallAdapter;
 
 /**
  * retrofit库
@@ -28,14 +27,14 @@ public @interface EnableRetrofit {
    *
    * @return
    */
-  String converterFactory();
+  String converterFactory() default "";
 
   /**
    * 全局默认的适配工厂bean name, 被{@link RetrofitInstance#callAdapterFactory()}覆盖
    *
    * @return
    */
-  Class<? extends CallAdapter.Factory> callAdapterFactory();
+  String callAdapterFactory() default "";
 
   /**
    * 基础地址, 支持如{@see org.springframework.beans.factory.annotation.Value}的变量解析, 被{@link
@@ -50,17 +49,17 @@ public @interface EnableRetrofit {
    *
    * @return
    */
-  RetrofitInstance[] instance();
+  RetrofitInstance[] instance() default {};
 
   /**
    * 全局客户端配置bean name, {@link RetrofitInstance#client()} 覆盖
    *
    * @return
    */
-  String client();
+  String client() default "";
 
   /**
    * default base package for api scanning.{@link RetrofitInstance#basePackages()} override
    */
-  String basePackage();
+  String basePackage() default "";
 }

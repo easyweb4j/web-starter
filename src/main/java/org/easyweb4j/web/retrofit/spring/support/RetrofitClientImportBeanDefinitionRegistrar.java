@@ -21,6 +21,7 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
@@ -47,14 +48,14 @@ public class RetrofitClientImportBeanDefinitionRegistrar implements ImportBeanDe
     BeanDefinitionRegistry registry) {
     // parse EnableRetrofit args
     RetrofitConfig defaultConfig = parseDefaultRetrofitConfig(importingClassMetadata);
-    RetrofitInstance[] instances = defaultConfig.instances;
+    AnnotationAttributes[] instances = defaultConfig.instances;
     if (ArrayUtils.isEmpty(instances)) {
       throw new ParameterInvalidException(RetrofitInstance.class, "instances", null);
     }
 
     // get all retrofit instance configuration
     for (int i = 0; i < instances.length; i++) {
-      RetrofitInstance instance = instances[i];
+      AnnotationAttributes instance = instances[i];
       // scan by base packages
       Set<Class<?>> apiInterfaces = scanAPI(instance);
       // register bean factory
@@ -65,7 +66,7 @@ public class RetrofitClientImportBeanDefinitionRegistrar implements ImportBeanDe
 
   private void registerBeans(BeanDefinitionRegistry registry, int beanIndex,
     RetrofitConfig defaultConfig,
-    RetrofitInstance instance, Set<Class<?>> apiInterfaces) {
+    AnnotationAttributes instance, Set<Class<?>> apiInterfaces) {
     if (CollectionUtils.isEmpty(apiInterfaces)) {
       LOGGER.error("no api interface found under");
       return;
@@ -76,22 +77,23 @@ public class RetrofitClientImportBeanDefinitionRegistrar implements ImportBeanDe
 
     MutablePropertyValues propertyValues = genericBeanDefinition.getPropertyValues();
 
+    String baseURL = instance.getString("baseURL");
+    String converterFactory = instance.getString("converterFactory");
+    String callAdapterFactory = instance.getString("callAdapterFactory");
+    String client = instance.getString("client");
+
     propertyValues.addPropertyValue("baseURL",
-      StringUtils.isBlank(instance.baseURL()) ? defaultConfig.baseURL : instance.baseURL());
+      StringUtils.isBlank(baseURL) ? defaultConfig.baseURL : baseURL);
 
     propertyValues.addPropertyValue("converterFactory",
-      StringUtils.isBlank(instance.converterFactory()) ? defaultConfig.factory
-        : instance.converterFactory());
+      StringUtils.isBlank(converterFactory) ? defaultConfig.factory : converterFactory);
 
     propertyValues.addPropertyValue("client",
-      StringUtils.isBlank(instance.client()) ? defaultConfig.clientCustomizer
-        : instance.client());
+      StringUtils.isBlank(client) ? defaultConfig.clientCustomizer : client);
 
     propertyValues.addPropertyValue("callAdapterFactory",
-      StringUtils.isBlank(instance.callAdapterFactory()) ? defaultConfig.callAdapterFactory
-        : instance.callAdapterFactory());
-
-    propertyValues.addPropertyValue("apiClasses", apiInterfaces);
+      StringUtils.isBlank(callAdapterFactory) ? defaultConfig.callAdapterFactory
+        : callAdapterFactory);
 
     String beanName = "retrofit-instance-" + (beanIndex + 1);
     registry.registerBeanDefinition(beanName, genericBeanDefinition);
@@ -106,17 +108,18 @@ public class RetrofitClientImportBeanDefinitionRegistrar implements ImportBeanDe
       MutablePropertyValues apiPropertyValues = apiGenericBeanDefinition.getPropertyValues();
       apiPropertyValues.addPropertyValue("retrofitBeanName", beanName);
       apiPropertyValues.addPropertyValue("apiClass", apiClz);
-      registry.registerBeanDefinition(beanName + "-" + (i + 1), apiGenericBeanDefinition);
+      registry.registerBeanDefinition(beanName + "-api-" + (i + 1), apiGenericBeanDefinition);
     }
   }
 
-  private Set<Class<?>> scanAPI(RetrofitInstance instance) {
-    if (ArrayUtils.isEmpty(instance.basePackages())) {
+  private Set<Class<?>> scanAPI(AnnotationAttributes instance) {
+    String[] basePackages = instance.getStringArray("basePackages");
+    if (ArrayUtils.isEmpty(basePackages)) {
       return null;
     }
 
     Set<Class<?>> resultClass = new HashSet<>();
-    for (String basePackage : instance.basePackages()) {
+    for (String basePackage : basePackages) {
       if (StringUtils.isAllBlank(basePackage)) {
         LOGGER.warn("basePackage empty");
         continue;
@@ -173,7 +176,7 @@ public class RetrofitClientImportBeanDefinitionRegistrar implements ImportBeanDe
           retrofitConfig.baseURL = (String) entry.getValue();
           break;
         case "instance":
-          retrofitConfig.instances = (RetrofitInstance[]) entry.getValue();
+          retrofitConfig.instances = (AnnotationAttributes[]) entry.getValue();
           break;
         case "client":
           retrofitConfig.clientCustomizer = (String) entry.getValue();
@@ -202,7 +205,7 @@ public class RetrofitClientImportBeanDefinitionRegistrar implements ImportBeanDe
     String callAdapterFactory;
     String baseURL;
     String basePackage;
-    RetrofitInstance[] instances;
+    AnnotationAttributes[] instances;
     String clientCustomizer;
   }
 }

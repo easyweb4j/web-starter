@@ -13,3 +13,7 @@ spring:
       maximumPoolSize: 3
       transactionIsolation: TRANSACTION_READ_COMMITTED
 
+api:
+  post:
+    url: "https://jsonplaceholder.typicode.com/posts/"
+

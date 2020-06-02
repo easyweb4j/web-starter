@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
+@Target(ElementType.TYPE)
 @Documented
 public @interface RetrofitInstance {
 
@@ -23,28 +23,28 @@ public @interface RetrofitInstance {
    *
    * @return
    */
-  String converterFactory();
+  String converterFactory() default "";
 
   /**
    * 默认适配类bean name
    *
    * @return
    */
-  String callAdapterFactory();
+  String callAdapterFactory() default "";
 
   /**
    * 基础地址, 支持如{@see org.springframework.beans.factory.annotation.Value}的变量解析
    *
    * @return
    */
-  String baseURL();
+  String baseURL() default "";
 
   /**
    * 客户端配置类，基于spring获取应的bean
    *
    * @return
    */
-  String client();
+  String client() default "";
 
   /**
    * 默认类扫描路径

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.core.env.Environment;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -19,6 +20,7 @@ import retrofit2.CallAdapter;
 import retrofit2.Converter.Factory;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * 通过此类注册到spring，达到使用注释配置retrofit的目的
@@ -46,6 +48,7 @@ public class RetrofitInstanceFactoryBean<T extends Object> implements FactoryBea
     if (StringUtils.isBlank(baseURL)) {
       throw new ParameterInvalidException(String.class, "baseURL", baseURL);
     }
+    LOGGER.debug("create retrofit instance using url {}", baseURL);
 
     // find beans
     Factory converterFactoryBean = getBean(converterFactory, Factory.class);
@@ -55,9 +58,11 @@ public class RetrofitInstanceFactoryBean<T extends Object> implements FactoryBea
     // build client
     // custmize client
     // build retrofit instance
-    Builder builder = new Builder().baseUrl(resolveDependency(baseURL));
+    Builder builder = new Builder().baseUrl(baseURL);
     if (null != converterFactoryBean) {
       builder.addConverterFactory(converterFactoryBean);
+    } else {
+      builder.addConverterFactory(JacksonConverterFactory.create());
     }
     if (null != callAdapterFactoryBean) {
       builder.addCallAdapterFactory(callAdapterFactoryBean);
@@ -77,14 +82,6 @@ public class RetrofitInstanceFactoryBean<T extends Object> implements FactoryBea
     clientCustomizerBean.customize(httpClientBuilder);
 
     builder.client(httpClientBuilder.build());
-  }
-
-  private String resolveDependency(String baseURL) {
-    StandardEvaluationContext standardEvaluationContext = new StandardEvaluationContext(
-      environment);
-    ExpressionParser expressionParser = new SpelExpressionParser();
-    return expressionParser.parseExpression(baseURL)
-      .getValue(standardEvaluationContext, String.class);
   }
 
   @Override
