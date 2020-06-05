@@ -21,8 +21,8 @@ public class RetrofitConfiguration {
     return new RetrofitClientCustomizer() {
       @Override
       public void customize(Builder builder) {
-        builder.connectTimeout(Duration.ofMillis(20000))
-          .readTimeout(Duration.ofMillis(20000));
+        builder.connectTimeout(Duration.ofMillis(100000))
+          .readTimeout(Duration.ofMillis(100000));
       }
     };
   }
